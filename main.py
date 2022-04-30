@@ -13,21 +13,25 @@ import numpy as np
 def main():
     network_layers = tuple([
         InputLayer(neurons_count=2),
+        HiddenLayer(neurons_count=3, activation_function_name='relu'),
         OutputLayer(neurons_count=1, activation_function_name='relu'),
     ])
     network = Network(network_layers)
 
     network.configure()
-    network.run(np.array([1, 1]))
 
-    for i in range(len(network.layers)):
-        print(f'Слой: {i + 1}, веса:')
-        for n in network.layers[i].neurons:
-            print(n.weights)
-            print(n.output_value)
-            print('----')
+    input_vectors = np.array([
+        [1, 2],
+        [1, 1],
+        [1, 1],
+    ])
+    result_vectors = np.array([
+        [2],
+        [1],
+        [1],
+    ])
 
-
+    network.train(input_vectors=input_vectors, result_vectors=input_vectors, batch_size=1, epochs=10, validation=0.7)
 
 
 if __name__ == '__main__':
