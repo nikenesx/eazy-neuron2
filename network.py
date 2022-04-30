@@ -1,10 +1,7 @@
-from time import sleep
-
 import numpy as np
 
 from exceptions import FirstLayerError, LastLayerError, HiddenLayerError, IncorrectInputError
 from layers import InputLayer, HiddenLayer, OutputLayer
-from neuron import Bias
 
 
 class Network:
@@ -42,16 +39,25 @@ class Network:
         validation_len = int(input_vectors_len * validation)
 
         for epoch in range(epochs):
-            np.random.shuffle(input_vectors)
+            # np.random.shuffle(input_vectors)
 
             vec_i = 0
+            categorical_sum = 0
             for index in range(validation_len, len(input_vectors)):
                 vec_i += 1
                 vector = input_vectors[index]
 
                 y = self.run(vector)
-                e = y - result_vectors[index]
+                y = y[:-1]
+                d = result_vectors[index]
+                e = y - d
                 error = e[0]
+                if index == len(input_vectors) - 1:
+                    for ii in range(len(y)):
+                        print(d)
+                        print(y[ii])
+                        categorical_sum += d * np.log(y[ii]) + (1 - d) * np.log(1 - y[ii])
+
 
                 self.layers[-1].set_local_gradients(error)
 
@@ -75,15 +81,15 @@ class Network:
                             neuron.sum_local_gradients = 0
 
                 print(
-                    '\repoch: {0}, completed: {1}/{2}, validation vectors count: {3}'.format(
+                    '\repoch: {0}, completed: {1}/{2}, validation vectors count: {3}, loss: {4}'.format(
                         epoch, vec_i,
                         len(input_vectors) - validation_len,
                         validation_len,
+                        categorical_sum * (-1) / (len(input_vectors) - validation_len)
                     ),
                     end='',
                 )
             print()
-
 
     @staticmethod
     def _check_layers(layers):
