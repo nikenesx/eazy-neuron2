@@ -1,12 +1,10 @@
-from optparse import Option
+from typing import Optional
 
 import numpy as np
 
-from activation_functions import ACTIVATION_FUNCTIONS_DICT
-
 
 class Neuron:
-    def __int__(self, weights: Option[np.array] = None, activation_func: Option[str] = None):
+    def __init__(self, weights: Optional[np.array] = None, activation_func: Optional[str] = None):
         self.weights = weights
         self.activation_function = activation_func
         self.local_gradient = 0
@@ -16,4 +14,13 @@ class Neuron:
 
     def set_output(self, inputs: np.array):
         self.input_value = np.dot(self.weights, inputs)
-        self.output_value = ACTIVATION_FUNCTIONS_DICT[self.activation_function](self.input_value)
+        self.output_value = self.activation_function(self.input_value)
+
+
+class Bias:
+    def __init__(self):
+        self.output_value = np.int8(1)
+        self.weights = None
+
+    def set_output(self, inputs: np.array):
+        pass
